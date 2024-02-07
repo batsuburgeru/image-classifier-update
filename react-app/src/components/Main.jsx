@@ -1,10 +1,13 @@
 import Hero from "./Hero.jsx";
 import "../css/Main.css";
 import React, { useState, useRef, useEffect } from "react";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeftLong,
   faArrowRightLong,
+  faPlus,
+  faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 function Main() {
@@ -90,9 +93,32 @@ function Main() {
       };
       reader.readAsDataURL(image);
     } else {
-      alert("Image size more than 2MB");
+      alert("Image size more than 5MB");
     }
   };
+
+  const classifyImage = async (event) => {
+    const file = inputFileRef.current.files[0];
+    const formData = new FormData();
+    formData.append("image", file);
+
+    try {
+      const response = await axios.post(
+        "http://127.0.0.1:5000/classifyImage",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <main>
@@ -151,23 +177,52 @@ function Main() {
               </button>
             </div>
           </div>
-          <div class="article-description-section article-section">
-            <p>Result</p>
+          <div className="article-description-section article-section">
+            <div className="results">
+              <p>Predicted Class:</p>
+              <p>.5</p>
+            </div>
+            <div className="results">
+              <p>Accuracy:</p>
+              <p>100</p>
+            </div>
+            <div className="results">
+              <p>Loss:</p>
+              <p>100</p>
+            </div>
+            <div className="results">
+              <p>Val Accuracy:</p>
+              <p>100</p>
+            </div>
+            <div className="results">
+              <p>Val Loss:</p>
+              <p>100</p>
+            </div>
+            <div className="results">
+              <p>Classification Report:</p>
+              <p>100</p>
+            </div>
+            <div className="results">
+              <p>Confusion Matrix:</p>
+              <p>100</p>
+            </div>
+            <button className="select-image" onClick={classifyImage}>
+              Classify Image
+            </button>
           </div>
-          <div class="article-title-section article-section">
+          <div className="article-title-section article-section">
             <h2>Input Image to Begin</h2>
-            <i class="fa-light fa-plus-large"></i>
           </div>
-          <div class="article-nav-section article-section">
+          <div className="article-nav-section article-section">
             <button
-              class="article-nav-button"
+              className="article-nav-button"
               type="button"
               onClick={handleLeftClick}
             >
               <FontAwesomeIcon icon={faArrowLeftLong} />
             </button>
             <button
-              class="article-nav-button"
+              className="article-nav-button"
               type="button"
               onClick={handleRightClick}
             >

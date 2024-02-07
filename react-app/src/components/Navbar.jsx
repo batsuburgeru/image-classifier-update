@@ -53,11 +53,7 @@ function Navbar() {
             <a onClick={handleRightClick}>IMAGE CLASSIFIER</a>
           </div>
         </div>
-        <button
-          id="nav-toggle-button"
-          type="button"
-          onclick="handleNavToggle()"
-        >
+        <button id="nav-toggle-button" type="button">
           <span>Menu</span>
           <FontAwesomeIcon icon={faBars} />
         </button>

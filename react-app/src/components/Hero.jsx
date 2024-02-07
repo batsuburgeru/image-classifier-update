@@ -62,15 +62,15 @@ function Hero() {
       <div id="tiles">
         <div class="tile">
           <i class="fa-solid fa-image"></i>
-          <img src="https://assets.codepen.io/1468070/edgar-infocus-eCSsB3sIEHs-unsplash.jpg?width=1000&height=1250&format=auto&quality=70" />
+          <img src="../src/assets/images/bison.jpg" />
         </div>
         <div class="tile">
           <i class="fa-solid fa-image"></i>
-          <img src="https://assets.codepen.io/1468070/eugene-golovesov-ItyV8UzZzzw-unsplash.jpg?width=818&height=1228&format=auto&quality=80" />
+          <img src="../src/assets/images/buffalo.jpg" />
         </div>
         <div class="tile">
           <i class="fa-solid fa-image"></i>
-          <img src="https://assets.codepen.io/1468070/alex-shuper-3OpOV8ntLj4-unsplash.jpg?width=1000&height=1500&format=auto&quality=80" />
+          <img src="../src/assets/images/moose.jpg" />
         </div>
       </div>
     </>

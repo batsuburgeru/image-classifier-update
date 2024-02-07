@@ -468,3 +468,11 @@ main > article .yt-link > i {
   background: var(--dark-blue);
   color: #fff;
 }
+
+.results {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+  color: #fff;
+  font-weight: bolder;
+}
