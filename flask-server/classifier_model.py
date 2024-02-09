@@ -1,13 +1,15 @@
 # Importing the packages
-import zipfile
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Conv2D, Flatten, Dropout, MaxPooling2D
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import load_model
+import pickle
 import os
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.metrics import classification_report
+from sklearn.metrics import precision_score, recall_score, f1_score
 
 # Define constants
 IMG_HEIGHT = 255
@@ -22,6 +24,9 @@ if os.path.exists(model_file):
     # Load the trained model
     model = load_model(model_file)
     print('Loaded pre-trained model.')
+    history_file = './model_saved/history.pkl'
+    with open(history_file, 'rb') as f:
+        history = pickle.load(f)
 else:
     # Path to your local zip file
     database = './src/Experiment1'
@@ -143,6 +148,13 @@ else:
     model.save(model_file)
     print('Trained model saved.')
 
+    history_file = './model_saved/history.pkl'
+    with open(history_file, 'wb') as f:
+        pickle.dump(history.history, f)
+    print('Training history saved.')
+    with open(history_file, 'rb') as f:
+        history = pickle.load(f)
+
 
 #Visualizing the training results
 def plot_training_results(history):
@@ -179,13 +191,102 @@ def preprocess_image(img_path):
     return img_array
 
 # Function to make predictions
-def predict_animal(img_path):
+def predict_animaltest(model, img_path, class_labels=["pig", "giraffe", "moose"]):
     processed_img = preprocess_image(img_path)
     predictions = model.predict(processed_img)
     class_labels = ['pig', 'giraffe', 'moose']
     predicted_class_index = tf.argmax(predictions, axis=1)[0]
     predicted_class = class_labels[predicted_class_index]
-    return predicted_class
+
+    val_batch_size = 10
+    IMG_HEIGHT = 255
+    IMG_WIDTH = 255
+    database = './src/Experiment1'
+
+    validation_dir = os.path.join(database, 'validation')
+
+    # Generator for validation data
+    validation_image_generator = ImageDataGenerator()
+
+    val_data_gen = validation_image_generator.flow_from_directory(
+        batch_size=val_batch_size,
+        directory=validation_dir,
+        target_size=(IMG_HEIGHT, IMG_WIDTH),
+        class_mode='categorical',
+        classes=['pig', 'giraffe', 'moose']
+    )
+    val_data_gen.reset()
+    # Get true labels
+    y_true = val_data_gen.labels
+    # Generate predictions on the validation data
+    y_pred = model.predict(val_data_gen)
+
+    # Convert predictions to class labels
+    y_pred_classes = np.argmax(y_pred, axis=1)
+
+    report = classification_report(y_true, y_pred_classes, output_dict=True)
+
+    accuracy = report['accuracy']*100
+    precision = report['weighted avg']['precision']
+    recall = report['weighted avg']['recall']
+    f1 = report['weighted avg']['f1-score']
+        
+
+    return predicted_class, accuracy, precision, recall, f1
+
+def predict_animal(model, img_path, class_labels=["pig", "giraffe", "moose"]):
+    processed_img = preprocess_image(img_path)
+    predictions = model.predict(processed_img)
+
+    predicted_class_index = np.argmax(predictions, axis=1)[0]
+    predicted_class = class_labels[predicted_class_index]
+
+    # Get metrics at the final epoch
+    final_epoch = epochs - 1
+    val_batch_size = 10
+    IMG_HEIGHT = 255
+    IMG_WIDTH = 255
+    database = './src/Experiment1'
+    # Path to the history pickle file
+    history_file = './model_saved/history.pkl'
+
+    # Load the history object from the pickle file
+    with open(history_file, 'rb') as f:
+        history = pickle.load(f)
+
+    validation_dir = os.path.join(database, 'validation')
+
+    # Generator for validation data
+    validation_image_generator = ImageDataGenerator()
+
+    val_data_gen = validation_image_generator.flow_from_directory(
+        batch_size=val_batch_size,
+        directory=validation_dir,
+        target_size=(IMG_HEIGHT, IMG_WIDTH),
+        class_mode='categorical',
+        classes=['pig', 'giraffe', 'moose']
+    )
+    # Evaluating the model
+    val_data_gen.reset()  # Reset the validation generator to the beginning
+    y_true = val_data_gen.classes
+    y_pred = model.predict(val_data_gen)
+
+    # Convert predictions to class labels
+    y_pred_classes = np.argmax(y_pred, axis=1)
+
+    # Calculate additional metrics
+    loss = history['loss'][final_epoch]
+    accuracy = history['accuracy'][final_epoch]
+    val_loss = history['val_loss'][final_epoch]
+    val_accuracy = history['val_accuracy'][final_epoch]
+
+    # Calculate precision, recall, and f1-score
+    precision = precision_score(y_true, y_pred_classes, average='weighted')
+    recall = recall_score(y_true, y_pred_classes, average='weighted')
+    f1 = f1_score(y_true, y_pred_classes, average='weighted')
+
+    # Return data as separate values
+    return predicted_class, loss, accuracy, val_loss, val_accuracy, precision, recall, f1
 
 #Sample Image Input Test
 #test_image_path ="./src/test-img/37.jpg"

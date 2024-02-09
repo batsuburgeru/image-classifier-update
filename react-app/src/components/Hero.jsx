@@ -62,11 +62,11 @@ function Hero() {
       <div id="tiles">
         <div class="tile">
           <i class="fa-solid fa-image"></i>
-          <img src="../src/assets/images/bison.jpg" />
+          <img src="../src/assets/images/pig.jpg" />
         </div>
         <div class="tile">
           <i class="fa-solid fa-image"></i>
-          <img src="../src/assets/images/buffalo.jpg" />
+          <img src="../src/assets/images/giraffe.jpg" />
         </div>
         <div class="tile">
           <i class="fa-solid fa-image"></i>

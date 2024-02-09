@@ -6,11 +6,10 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowLeftLong,
   faArrowRightLong,
-  faPlus,
-  faPlusCircle,
 } from "@fortawesome/free-solid-svg-icons";
 
 function Main() {
+  const [classificationResult, setClassificationResult] = useState(null);
   /* -- Carousel Navigation -- */
   const [activeIndex, setActiveIndex] = useState(0);
   const slidesRef = useRef(null);
@@ -114,6 +113,7 @@ function Main() {
       );
 
       console.log(response.data);
+      setClassificationResult(response.data);
     } catch (error) {
       console.error(error);
     }
@@ -180,31 +180,85 @@ function Main() {
           <div className="article-description-section article-section">
             <div className="results">
               <p>Predicted Class:</p>
-              <p>.5</p>
+              <p>
+                {classificationResult ? ( // Check if classificationResult is not null
+                  <p>{classificationResult.Predicted_Class.toUpperCase()}</p> // If yes, display the predicted class
+                ) : (
+                  <p></p> // If no, display a loading message
+                )}
+              </p>
             </div>
             <div className="results">
               <p>Accuracy:</p>
-              <p>100</p>
+              <p>
+                {classificationResult ? ( // Check if classificationResult is not null
+                  <p>
+                    {(classificationResult.Accuracy_Result * 100).toFixed(2)}%
+                  </p> // If yes, display the predicted class
+                ) : (
+                  <p></p> // If no, display a loading message
+                )}
+              </p>
+            </div>
+            <div className="results">
+              <p>Precision:</p>
+              <p>
+                {classificationResult ? ( // Check if classificationResult is not null
+                  <p>{classificationResult.Precision_Result.toFixed(2)}</p> // If yes, display the predicted class
+                ) : (
+                  <p></p> // If no, display a loading message
+                )}
+              </p>
+            </div>
+            <div className="results">
+              <p>Recall:</p>
+              <p>
+                {classificationResult ? ( // Check if classificationResult is not null
+                  <p>{classificationResult.Recall_Result.toFixed(2)}</p> // If yes, display the predicted class
+                ) : (
+                  <p></p> // If no, display a loading message
+                )}
+              </p>
+            </div>
+            <div className="results">
+              <p>F1-Score:</p>
+              <p>
+                {classificationResult ? ( // Check if classificationResult is not null
+                  <p>{classificationResult.F1_Score.toFixed(2)}</p> // If yes, display the predicted class
+                ) : (
+                  <p></p> // If no, display a loading message
+                )}
+              </p>
             </div>
             <div className="results">
               <p>Loss:</p>
-              <p>100</p>
+              <p>
+                {classificationResult ? ( // Check if classificationResult is not null
+                  <p>{(classificationResult.Loss * 100).toFixed(2)}%</p> // If yes, display the predicted class
+                ) : (
+                  <p></p> // If no, display a loading message
+                )}
+              </p>
             </div>
             <div className="results">
               <p>Val Accuracy:</p>
-              <p>100</p>
+              <p>
+                {classificationResult ? ( // Check if classificationResult is not null
+                  <p>{(classificationResult.Val_Accuracy * 100).toFixed(2)}%</p> // If yes, display the predicted class
+                ) : (
+                  <p></p> // If no, display a loading message
+                )}
+              </p>
             </div>
             <div className="results">
               <p>Val Loss:</p>
-              <p>100</p>
-            </div>
-            <div className="results">
-              <p>Classification Report:</p>
-              <p>100</p>
-            </div>
-            <div className="results">
-              <p>Confusion Matrix:</p>
-              <p>100</p>
+              <p>
+                {classificationResult ? ( // Check if classificationResult is not null
+                  <p>{(classificationResult.Val_Loss * 100).toFixed(2)}%</p> // If yes, display the predicted class
+                ) : (
+                  <p></p> // If no, display a loading message
+                )}
+              </p>
             </div>
             <button className="select-image" onClick={classifyImage}>
               Classify Image
