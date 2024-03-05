@@ -70,8 +70,8 @@ main > article > .article-image-section {
 
 main > article > .article-description-section {
   flex-direction: column;
-  justify-content: flex-end;
-  padding: 4rem;
+  justify-content: flex-start;
+  padding: 3rem;
 }
 
 main > article > .article-description-section > p {
@@ -268,9 +268,6 @@ main > article > .article-nav-section > .article-nav-button:nth-child(2) {
     font-size: 1rem;
   }
 }
-
-/* -- YT link / Source link styles -- */
-
 main > article > .article-description-section > p > .source-link {
   color: var(--highlight-color);
   display: inline;
@@ -454,19 +451,32 @@ main > article .yt-link > i {
 .select-image {
   display: block;
   width: 100%;
-  padding: 16px 0;
+  padding: 14px 0;
   border-radius: 15px;
   background: var(--blue);
   color: black;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 14px;
   border: none;
   cursor: pointer;
   transition: all 0.3s ease;
 }
-.select-image:hover {
+.select-image-button:hover {
   background: var(--dark-blue);
   color: #fff;
+  font-weight: bolder;
+}
+
+.correct:hover {
+  background: #afe1af;
+  color: white;
+  font-weight: bolder;
+}
+
+.wrong:hover {
+  background: #ee4b2b;
+  color: white;
+  font-weight: bolder;
 }
 
 .results {
@@ -474,5 +484,53 @@ main > article .yt-link > i {
   justify-content: space-between;
   margin-bottom: 1rem;
   color: #fff;
+  font-weight: bolder;
+}
+
+.button-container {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: none;
+}
+
+.category-buttons {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.giraffe:hover {
+  background: #edcf8f;
+  color: white;
+  font-weight: bolder;
+}
+
+.moose:hover {
+  background: #7a5739;
+  color: white;
+  font-weight: bolder;
+}
+
+.pig:hover {
+  background: #f6b1b1;
+  color: white;
+  font-weight: bolder;
+}
+
+.select-image.correct,
+.select-image.wrong {
+  opacity: 1;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 59.5%; /* Ensure the container takes up the full height of its parent */
+}
+
+.loading-message {
+  color: white;
   font-weight: bolder;
 }

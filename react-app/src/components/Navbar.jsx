@@ -45,7 +45,7 @@ function Navbar() {
             <a>BERNAL</a>
           </div>
           <div id="nav-social-section" className="nav-section">
-            <a href="#">
+            <a href="https://github.com/batsuburgeru/image-classifier.git">
               <FontAwesomeIcon icon={faGithub} />
             </a>
           </div>

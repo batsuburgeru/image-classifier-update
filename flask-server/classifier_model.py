@@ -19,15 +19,16 @@ val_batch_size = 10
 epochs = 25
 
 # Check if the model file exists
-model_file = './model_saved/model.h5'
-if os.path.exists(model_file):
+#model_file = './model_saved/model.h5'
+#if os.path.exists(model_file):
     # Load the trained model
-    model = load_model(model_file)
-    print('Loaded pre-trained model.')
-    history_file = './model_saved/history.pkl'
-    with open(history_file, 'rb') as f:
-        history = pickle.load(f)
-else:
+#    model = load_model(model_file)
+#    print('Loaded pre-trained model.')
+#    history_file = './model_saved/history.pkl'
+#    with open(history_file, 'rb') as f:
+#        history = pickle.load(f)
+#else:
+def image_classify():
     # Path to your local zip file
     database = './src/Experiment1'
 
@@ -144,16 +145,20 @@ else:
         validation_steps=max(1, total_val // val_batch_size)
     )
 
-    # Save the trained model to disk
+    #Save the trained model to disk
+    model_file = './model_saved/model.h5'
     model.save(model_file)
     print('Trained model saved.')
+
+    model = load_model('./model_saved/model.h5')
 
     history_file = './model_saved/history.pkl'
     with open(history_file, 'wb') as f:
         pickle.dump(history.history, f)
     print('Training history saved.')
-    with open(history_file, 'rb') as f:
-        history = pickle.load(f)
+#    with open(history_file, 'rb') as f:
+#        history = pickle.load(f)
+    return model
 
 
 #Visualizing the training results
@@ -235,58 +240,62 @@ def predict_animaltest(model, img_path, class_labels=["pig", "giraffe", "moose"]
     return predicted_class, accuracy, precision, recall, f1
 
 def predict_animal(model, img_path, class_labels=["pig", "giraffe", "moose"]):
-    processed_img = preprocess_image(img_path)
-    predictions = model.predict(processed_img)
+    if model is None:
+        print("Error: Model is not initialized.")
+        return None
+    else:
+        processed_img = preprocess_image(img_path)
+        predictions = model.predict(processed_img)
 
-    predicted_class_index = np.argmax(predictions, axis=1)[0]
-    predicted_class = class_labels[predicted_class_index]
+        predicted_class_index = np.argmax(predictions, axis=1)[0]
+        predicted_class = class_labels[predicted_class_index]
 
-    # Get metrics at the final epoch
-    final_epoch = epochs - 1
-    val_batch_size = 10
-    IMG_HEIGHT = 255
-    IMG_WIDTH = 255
-    database = './src/Experiment1'
-    # Path to the history pickle file
-    history_file = './model_saved/history.pkl'
+        # Get metrics at the final epoch
+        final_epoch = epochs - 1
+        val_batch_size = 10
+        IMG_HEIGHT = 255
+        IMG_WIDTH = 255
+        database = './src/Experiment1'
+        # Path to the history pickle file
+        history_file = './model_saved/history.pkl'
 
-    # Load the history object from the pickle file
-    with open(history_file, 'rb') as f:
-        history = pickle.load(f)
+        # Load the history object from the pickle file
+        with open(history_file, 'rb') as f:
+            history = pickle.load(f)
 
-    validation_dir = os.path.join(database, 'validation')
+        validation_dir = os.path.join(database, 'validation')
 
-    # Generator for validation data
-    validation_image_generator = ImageDataGenerator()
+        # Generator for validation data
+        validation_image_generator = ImageDataGenerator()
 
-    val_data_gen = validation_image_generator.flow_from_directory(
-        batch_size=val_batch_size,
-        directory=validation_dir,
-        target_size=(IMG_HEIGHT, IMG_WIDTH),
-        class_mode='categorical',
-        classes=['pig', 'giraffe', 'moose']
-    )
-    # Evaluating the model
-    val_data_gen.reset()  # Reset the validation generator to the beginning
-    y_true = val_data_gen.classes
-    y_pred = model.predict(val_data_gen)
+        val_data_gen = validation_image_generator.flow_from_directory(
+            batch_size=val_batch_size,
+            directory=validation_dir,
+            target_size=(IMG_HEIGHT, IMG_WIDTH),
+            class_mode='categorical',
+            classes=['pig', 'giraffe', 'moose']
+        )
+        # Evaluating the model
+        val_data_gen.reset()  # Reset the validation generator to the beginning
+        y_true = val_data_gen.classes
+        y_pred = model.predict(val_data_gen)
 
-    # Convert predictions to class labels
-    y_pred_classes = np.argmax(y_pred, axis=1)
+        # Convert predictions to class labels
+        y_pred_classes = np.argmax(y_pred, axis=1)
 
-    # Calculate additional metrics
-    loss = history['loss'][final_epoch]
-    accuracy = history['accuracy'][final_epoch]
-    val_loss = history['val_loss'][final_epoch]
-    val_accuracy = history['val_accuracy'][final_epoch]
+        # Calculate additional metrics
+        loss = history['loss'][final_epoch]
+        accuracy = history['accuracy'][final_epoch]
+        val_loss = history['val_loss'][final_epoch]
+        val_accuracy = history['val_accuracy'][final_epoch]
 
-    # Calculate precision, recall, and f1-score
-    precision = precision_score(y_true, y_pred_classes, average='weighted')
-    recall = recall_score(y_true, y_pred_classes, average='weighted')
-    f1 = f1_score(y_true, y_pred_classes, average='weighted')
+        # Calculate precision, recall, and f1-score
+        precision = precision_score(y_true, y_pred_classes, average='weighted')
+        recall = recall_score(y_true, y_pred_classes, average='weighted')
+        f1 = f1_score(y_true, y_pred_classes, average='weighted')
 
-    # Return data as separate values
-    return predicted_class, loss, accuracy, val_loss, val_accuracy, precision, recall, f1
+        # Return data as separate values
+        return predicted_class, loss, accuracy, val_loss, val_accuracy, precision, recall, f1
 
 #Sample Image Input Test
 #test_image_path ="./src/test-img/37.jpg"
