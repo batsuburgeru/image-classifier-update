@@ -274,7 +274,10 @@ function Main() {
                   <p>Predicted Class:</p>
                   <p>
                     {classificationResult
-                      ? classificationResult.Predicted_Class.toUpperCase()
+                      ? classificationResult.Predicted_Class.toUpperCase() ===
+                        "BISON"
+                        ? "NOT PART OF THE PROGRAM"
+                        : classificationResult.Predicted_Class.toUpperCase()
                       : ""}
                   </p>
                 </div>
@@ -333,7 +336,7 @@ function Main() {
                   <p>Val Loss:</p>
                   <p>
                     {classificationResult
-                      ? (classificationResult.Val_Loss * 100).toFixed(2) + "%"
+                      ? classificationResult.Val_Loss.toFixed(2) + "%"
                       : ""}
                   </p>
                 </div>

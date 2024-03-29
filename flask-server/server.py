@@ -4,8 +4,6 @@ import os
 from flask import Flask
 from classifier_model import predict_animal, image_classify
 from flask_cors import CORS
-from tensorflow.keras.models import load_model
-
 
 app = Flask(__name__)
 CORS(app, origins="*")
@@ -123,9 +121,6 @@ def wrong_classification():
     file.save(image_path)
 
     return 'Image saved successfully', 200
-
-
-
 
 if __name__ == "__main__":
     app.run(debug=True)

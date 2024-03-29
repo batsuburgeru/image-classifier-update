@@ -239,7 +239,7 @@ def predict_animaltest(model, img_path, class_labels=["pig", "giraffe", "moose"]
 
     return predicted_class, accuracy, precision, recall, f1
 
-def predict_animal(model, img_path, class_labels=["pig", "giraffe", "moose"]):
+def predict_animal(model, img_path, class_labels=["pig", "giraffe", "moose"], threshold=0.9):
     if model is None:
         print("Error: Model is not initialized.")
         return None
@@ -247,8 +247,22 @@ def predict_animal(model, img_path, class_labels=["pig", "giraffe", "moose"]):
         processed_img = preprocess_image(img_path)
         predictions = model.predict(processed_img)
 
-        predicted_class_index = np.argmax(predictions, axis=1)[0]
-        predicted_class = class_labels[predicted_class_index]
+        #predicted_class_index = np.argmax(predictions, axis=1)[0]
+        # Check if any predicted probability exceeds the threshold
+        if np.max(predictions) < threshold:
+            predicted_class = "Not Part of The Program"
+        else:
+            # Get the class index with the highest probability
+            predicted_class_index = np.argmax(predictions, axis=1)[0]
+
+            # Check if the predicted class index is within the range of available classes
+            if predicted_class_index < len(class_labels):
+                predicted_class = class_labels[predicted_class_index]
+            else:
+                # If the predicted class is out of range, classify it as class "X"
+                predicted_class = "Not Part of The Program"
+
+        #predicted_class = class_labels[predicted_class_index]
 
         # Get metrics at the final epoch
         final_epoch = epochs - 1
