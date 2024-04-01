@@ -275,7 +275,7 @@ function Main() {
                   <p>
                     {classificationResult
                       ? classificationResult.Predicted_Class.toUpperCase() ===
-                        "BISON"
+                        "BOAR"
                         ? "NOT PART OF THE PROGRAM"
                         : classificationResult.Predicted_Class.toUpperCase()
                       : ""}

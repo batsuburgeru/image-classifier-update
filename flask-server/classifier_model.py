@@ -42,6 +42,8 @@ def image_classify():
     train_giraffe_dir = os.path.join(train_dir, 'giraffe')
     # Directory with training moose pictures
     train_moose_dir = os.path.join(train_dir, 'moose')
+    # Directory with training boar pictures
+    train_boar_dir = os.path.join(train_dir, 'boar')
 
     # Directory with validation pig pictures
     validation_pig_dir = os.path.join(validation_dir, 'pig')
@@ -49,6 +51,8 @@ def image_classify():
     validation_giraffe_dir = os.path.join(validation_dir, 'giraffe')
     # Directory with validation moose pictures
     validation_moose_dir = os.path.join(validation_dir, 'moose')
+    # Directory with validation boar pictures
+    validation_boar_dir = os.path.join(validation_dir, 'boar')
 
     # Understanding the data
     num_pig_tr = len(os.listdir(train_pig_dir))
@@ -57,10 +61,12 @@ def image_classify():
     num_pig_val = len(os.listdir(validation_pig_dir))
     num_giraffe_val = len(os.listdir(validation_giraffe_dir))
     num_moose_val = len(os.listdir(validation_moose_dir))
+    num_boar_tr = len(os.listdir(train_boar_dir))
+    num_boar_val = len(os.listdir(validation_boar_dir))
 
     # Total number of training and validation images
-    total_train = num_pig_tr + num_giraffe_tr + num_moose_tr
-    total_val = num_pig_val + num_giraffe_val + num_moose_val
+    total_train = num_pig_tr + num_giraffe_tr + num_moose_tr + num_boar_tr
+    total_val = num_pig_val + num_giraffe_val + num_moose_val + num_boar_val
 
     print('total training pig images:', num_pig_tr)
     print('total training giraffe images:', num_giraffe_tr)
@@ -90,8 +96,8 @@ def image_classify():
         directory=train_dir,
         shuffle=True,
         target_size=(IMG_HEIGHT, IMG_WIDTH),
-        class_mode='categorical',  # Use categorical for more than two classes
-        classes=['pig', 'giraffe', 'moose']  # Specify class labels
+        class_mode='categorical',
+        classes=['pig', 'giraffe', 'moose', 'boar']
     )
 
     val_data_gen = validation_image_generator.flow_from_directory(
@@ -99,7 +105,7 @@ def image_classify():
         directory=validation_dir,
         target_size=(IMG_HEIGHT, IMG_WIDTH),
         class_mode='categorical',
-        classes=['pig', 'giraffe', 'moose']
+        classes=['pig', 'giraffe', 'moose', 'boar']
     )
 
     #Visualizing the training images
@@ -129,7 +135,7 @@ def image_classify():
         Dropout(0.2),
         Flatten(),
         Dense(512, activation='relu'),
-        Dense(3, activation='softmax')  # Change 1 to 3 for multi-class classification
+        Dense(4, activation='softmax')  # Change output neurons to 4
     ])
 
     #Compiling the model
@@ -196,7 +202,7 @@ def preprocess_image(img_path):
     return img_array
 
 # Function to make predictions
-def predict_animaltest(model, img_path, class_labels=["pig", "giraffe", "moose"]):
+def predict_animaltest(model, img_path, class_labels=["pig", "giraffe", "moose","boar"]):
     processed_img = preprocess_image(img_path)
     predictions = model.predict(processed_img)
     class_labels = ['pig', 'giraffe', 'moose']
@@ -239,7 +245,7 @@ def predict_animaltest(model, img_path, class_labels=["pig", "giraffe", "moose"]
 
     return predicted_class, accuracy, precision, recall, f1
 
-def predict_animal(model, img_path, class_labels=["pig", "giraffe", "moose"], threshold=0.9):
+def predict_animal(model, img_path, class_labels=["pig", "giraffe", "moose", "boar"], threshold=0.9):
     if model is None:
         print("Error: Model is not initialized.")
         return None
@@ -287,7 +293,7 @@ def predict_animal(model, img_path, class_labels=["pig", "giraffe", "moose"], th
             directory=validation_dir,
             target_size=(IMG_HEIGHT, IMG_WIDTH),
             class_mode='categorical',
-            classes=['pig', 'giraffe', 'moose']
+            classes=['pig', 'giraffe', 'moose', "boar"]
         )
         # Evaluating the model
         val_data_gen.reset()  # Reset the validation generator to the beginning
