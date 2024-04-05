@@ -70,7 +70,7 @@ main > article > .article-image-section {
 
 main > article > .article-description-section {
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: flex-end;
   padding: 3rem;
 }
 
